@@ -463,23 +463,20 @@ function showGameOver() {
   cancelAnimationFrame(animationId);
   finalScoreElement.textContent = score;
   finalLevelElement.textContent = level;
-  gameOverModal.style.display = "flex";
 
-  setTimeout(() => {
-    gameOverModal.style.display = "none";
+  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+  const lowestScore =
+    ranking.length < 10 ? 0 : ranking[ranking.length - 1].score;
 
-    const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
-
-    const lowestScore =
-      ranking.length < 10 ? 0 : ranking[ranking.length - 1].score;
-
-    if (score > 0 && (ranking.length < 10 || score > lowestScore)) {
-      // Exibe modal apenas se for top 10 e > 0
-      nameModalOpen = true;
-      document.getElementById("nameModal").style.display = "flex";
-      document.getElementById("playerNameInput").focus();
-    }
-  }, 1000);
+  // Se for top 10 e score > 0 → pede nome
+  if (score > 0 && (ranking.length < 10 || score > lowestScore)) {
+    nameModalOpen = true;
+    document.getElementById("nameModal").style.display = "flex";
+    document.getElementById("playerNameInput").focus();
+  } else {
+    // Senão, mostra o Game Over direto
+    gameOverModal.style.display = "flex";
+  }
 }
 function updateRanking(entry) {
   const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
@@ -524,11 +521,9 @@ document.getElementById("saveNameButton").addEventListener("click", () => {
     document.getElementById("nameModal").style.display = "none";
     nameModalOpen = false;
 
-    // Atualiza os dados novamente (por garantia)
+    // Depois de salvar o nome, mostra o Game Over
     finalScoreElement.textContent = score;
     finalLevelElement.textContent = level;
-
-    // Mostra novamente o modal de Game Over
     gameOverModal.style.display = "flex";
   } else {
     input.focus();

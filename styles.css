@@ -348,7 +348,7 @@ h1 {
 }
 
 .touch-controls {
-  display: none; /* escondido por padrão */
+  display: none;
   margin-top: 15px;
   gap: 10px;
   flex-wrap: wrap;
@@ -356,6 +356,7 @@ h1 {
 }
 
 .touch-controls button {
+  display: none;
   background-color: #83c346;
   color: #1f3344;
   font-size: 1.5rem;
@@ -451,6 +452,7 @@ h1 {
   }
 
   .touch-controls button {
+    display: inline;
     background-color: #83c346;
     color: #1f3344;
     font-size: 1.5rem;
