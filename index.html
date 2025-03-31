@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+
     <title>Tetris Simples</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -11,6 +16,12 @@
       <h1>TETRIS</h1>
 
       <div class="game-container">
+        <div class="touch-controls">
+          <button id="leftBtn">⬅️</button>
+          <button id="rotateBtn">🔄</button>
+          <button id="rightBtn">➡️</button>
+          <button id="dropBtn">⬇️</button>
+        </div>
         <div class="ranking-box">
           <h3>🏆 Ranking</h3>
           <table id="ranking-table">
@@ -64,7 +75,11 @@
       </div>
     </div>
     <div id="pause-overlay" class="pause-overlay">
-      <div class="pause-symbol">⏸</div>
+      <div class="volume-controls">
+        <label for="volumeRange">Volume 🎵</label>
+        <input type="range" id="volumeRange" min="0" max="100" value="100" />
+        <button id="muteButton">🔇 Mutar</button>
+      </div>
     </div>
     <div id="nameModal" class="modal">
       <div class="modal-content">

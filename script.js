@@ -10,8 +10,11 @@ const finalLevelElement = document.getElementById("finalLevel");
 const restartButton = document.getElementById("restartButton");
 const pauseOverlay = document.getElementById("pause-overlay");
 const bgMusic = document.getElementById("gameMusic");
+const volumeSlider = document.getElementById("volumeRange");
+const muteButton = document.getElementById("muteButton");
 let musicPlaying = false;
 let nameModalOpen = false;
+let isMuted = false;
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -357,7 +360,7 @@ function movePiece(direction) {
 
 // Controles do teclado
 function control(e) {
-  if (nameModalOpen) return; // <- bloqueia tudo se o modal de nome estiver aberto
+  if (nameModalOpen) return;
 
   if (!musicPlaying) {
     bgMusic.play().catch((err) => console.log("Erro ao tocar música:", err));
@@ -561,3 +564,44 @@ restartButton.addEventListener("click", restartGame);
 
 // Inicia o jogo
 init();
+
+// Controle de volume
+volumeSlider.addEventListener("input", () => {
+  const volume = volumeSlider.value / 100;
+  bgMusic.volume = volume;
+  isMuted = volume === 0;
+  updateMuteButton();
+});
+
+muteButton.addEventListener("click", () => {
+  isMuted = !isMuted;
+  if (isMuted) {
+    bgMusic.volume = 0;
+    volumeSlider.value = 0;
+  } else {
+    bgMusic.volume = 1;
+    volumeSlider.value = 100;
+  }
+  updateMuteButton();
+});
+
+function updateMuteButton() {
+  muteButton.textContent = isMuted ? "🔊 Ativar som" : "🔇 Mutar";
+}
+
+// Controles de toque para mobile
+document.getElementById("leftBtn").addEventListener("click", () => {
+  if (!gameOver && !nameModalOpen) movePiece("left");
+});
+
+document.getElementById("rightBtn").addEventListener("click", () => {
+  if (!gameOver && !nameModalOpen) movePiece("right");
+});
+
+document.getElementById("rotateBtn").addEventListener("click", () => {
+  if (!gameOver && !nameModalOpen) rotate();
+});
+
+document.getElementById("dropBtn").addEventListener("click", () => {
+  if (!gameOver && !nameModalOpen) movePiece("down");
+});

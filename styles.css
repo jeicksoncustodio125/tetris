@@ -278,6 +278,100 @@ h1 {
   background-color: #6da736;
   transform: scale(1.05);
 }
+
+.volume-controls {
+  background-color: rgba(23, 91, 117, 0.9);
+  border: 1px solid #3a7a99;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 250px;
+}
+
+.volume-controls label {
+  color: #83c346;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #000;
+}
+
+#volumeRange {
+  width: 100%;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #83c346, #3a7a99);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#volumeRange::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border: 2px solid #83c346;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#volumeRange::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border: 2px solid #83c346;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#muteButton {
+  background-color: #83c346;
+  color: #1f3344;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#muteButton:hover {
+  background-color: #6da736;
+  transform: scale(1.05);
+}
+
+.touch-controls {
+  display: none; /* escondido por padrão */
+  margin-top: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.touch-controls button {
+  background-color: #83c346;
+  color: #1f3344;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 12px 18px;
+  margin: 5px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.touch-controls button:active {
+  transform: scale(0.95);
+}
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -294,41 +388,83 @@ h1 {
 }
 
 /* Responsividade */
-@media (max-height: 700px) {
-  .game-container {
-    max-height: 500px;
+/* Estilo padrão mobile: apenas board + botões visíveis */
+@media (max-width: 700px) {
+  body {
+    overflow: auto; /* permite scroll se necessário */
+    justify-content: flex-start;
+    padding: 10px;
   }
 
-  #board {
-    grid-template-columns: repeat(10, 20px);
-    grid-template-rows: repeat(20, 20px);
+  .game-wrapper {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
   }
 
-  .cell {
-    width: 20px;
-    height: 20px;
-  }
-
-  .game-info {
-    width: 130px;
-  }
-}
-
-@media (max-width: 600px) {
   .game-container {
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
     max-height: none;
-  }
-
-  .game-info {
-    flex-direction: row;
-    flex-wrap: wrap;
     width: 100%;
-    justify-content: center;
   }
 
-  .info-box {
-    width: calc(50% - 10px);
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .ranking-box,
+  .game-info {
+    display: none !important; /* oculta completamente */
+  }
+
+  .game-board {
+    order: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  #board {
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 1px;
+    border: 2px solid #3a7a99;
+    background-color: #175b75;
+  }
+
+  .cell {
+    width: 30px;
+    height: 30px;
+  }
+
+  .touch-controls {
+    order: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 20px;
+  }
+
+  .touch-controls button {
+    background-color: #83c346;
+    color: #1f3344;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+    min-width: 70px;
+  }
+
+  .touch-controls button:active {
+    transform: scale(0.95);
   }
 }
