@@ -9,7 +9,23 @@
   <body>
     <div class="game-wrapper">
       <h1>TETRIS</h1>
+
       <div class="game-container">
+        <div class="ranking-box">
+          <h3>🏆 Ranking</h3>
+          <table id="ranking-table">
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Nome</th>
+                <th>Pontos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- As melhores pontuações aparecerão aqui -->
+            </tbody>
+          </table>
+        </div>
         <div class="game-board">
           <div id="board"></div>
         </div>
@@ -49,6 +65,19 @@
     </div>
     <div id="pause-overlay" class="pause-overlay">
       <div class="pause-symbol">⏸</div>
+    </div>
+    <div id="nameModal" class="modal">
+      <div class="modal-content">
+        <h2>Parabéns!</h2>
+        <p>Digite seu nome para entrar no ranking:</p>
+        <input
+          type="text"
+          id="playerNameInput"
+          maxlength="20"
+          placeholder="Seu nome"
+        />
+        <button id="saveNameButton">Salvar</button>
+      </div>
     </div>
     <audio
       id="gameMusic"

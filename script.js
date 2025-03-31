@@ -9,6 +9,9 @@ const finalScoreElement = document.getElementById("finalScore");
 const finalLevelElement = document.getElementById("finalLevel");
 const restartButton = document.getElementById("restartButton");
 const pauseOverlay = document.getElementById("pause-overlay");
+const bgMusic = document.getElementById("gameMusic");
+let musicPlaying = false;
+let nameModalOpen = false;
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -83,6 +86,7 @@ function init() {
   generatePiece();
   generateNextPiece();
   update();
+  renderRanking(); // <- Adicionado aqui
   document.addEventListener("keydown", control);
   dropStart = performance.now();
   animationId = requestAnimationFrame(drop);
@@ -270,7 +274,7 @@ function checkLines() {
     scoreElement.textContent = score;
 
     // Aumenta o nível a cada 10 linhas
-    const newLevel = Math.floor(score / 1000) + 1;
+    const newLevel = Math.floor(score / 200) + 1;
     if (newLevel > level) {
       level = newLevel;
       levelElement.textContent = level;
@@ -353,10 +357,15 @@ function movePiece(direction) {
 
 // Controles do teclado
 function control(e) {
-  // Se o jogo estiver pausado e for uma tecla de movimento, despausa
+  if (nameModalOpen) return; // <- bloqueia tudo se o modal de nome estiver aberto
+
+  if (!musicPlaying) {
+    bgMusic.play().catch((err) => console.log("Erro ao tocar música:", err));
+    musicPlaying = true;
+  }
+
   if (isPaused && [37, 38, 39, 40, 32].includes(e.keyCode)) {
-    togglePause(); // Despausa o jogo
-    // Executa a ação da tecla pressionada
+    togglePause();
     switch (e.keyCode) {
       case 37:
         movePiece("left");
@@ -374,13 +383,11 @@ function control(e) {
         movePiece("drop");
         break;
     }
-    return; // Sai da função após despausar
+    return;
   }
 
-  // Se o jogo estiver pausado, ignora outras teclas (exceto P para despausar)
   if (isPaused && e.keyCode !== 80) return;
 
-  // Controles normais quando não estiver pausado
   switch (e.keyCode) {
     case 37:
       movePiece("left");
@@ -454,8 +461,76 @@ function showGameOver() {
   finalScoreElement.textContent = score;
   finalLevelElement.textContent = level;
   gameOverModal.style.display = "flex";
+
+  setTimeout(() => {
+    gameOverModal.style.display = "none";
+
+    const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+
+    const lowestScore =
+      ranking.length < 10 ? 0 : ranking[ranking.length - 1].score;
+
+    if (score > 0 && (ranking.length < 10 || score > lowestScore)) {
+      // Exibe modal apenas se for top 10 e > 0
+      nameModalOpen = true;
+      document.getElementById("nameModal").style.display = "flex";
+      document.getElementById("playerNameInput").focus();
+    }
+  }, 1000);
+}
+function updateRanking(entry) {
+  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+
+  // Adiciona nova entrada
+  ranking.push(entry);
+
+  // Ordena do maior para o menor
+  ranking.sort((a, b) => b.score - a.score);
+
+  // Limita a 10 entradas
+  const top10 = ranking.slice(0, 10);
+
+  // Salva de volta
+  localStorage.setItem("ranking", JSON.stringify(top10));
 }
 
+function renderRanking() {
+  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+  const tableBody = document.querySelector("#ranking-table tbody");
+
+  tableBody.innerHTML = ""; // Limpa tabela
+
+  ranking.forEach((entry, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${entry.name}</td>
+      <td>${entry.score}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+document.getElementById("saveNameButton").addEventListener("click", () => {
+  const input = document.getElementById("playerNameInput");
+  const playerName = input.value.trim();
+
+  if (playerName) {
+    updateRanking({ name: playerName, score });
+    renderRanking();
+    input.value = "";
+    document.getElementById("nameModal").style.display = "none";
+    nameModalOpen = false;
+
+    // Atualiza os dados novamente (por garantia)
+    finalScoreElement.textContent = score;
+    finalLevelElement.textContent = level;
+
+    // Mostra novamente o modal de Game Over
+    gameOverModal.style.display = "flex";
+  } else {
+    input.focus();
+  }
+});
 function restartGame() {
   // Reseta o jogo
   board = createBoard();

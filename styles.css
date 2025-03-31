@@ -33,8 +33,9 @@ h1 {
 .game-container {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   gap: 20px;
-  height: calc(100vh - 120px);
+  height: auto;
   max-height: 600px;
 }
 
@@ -216,6 +217,67 @@ h1 {
   animation: pulse 1.5s infinite;
 }
 
+.ranking-box {
+  background-color: #175b75;
+  border: 1px solid #3a7a99;
+  padding: 10px;
+  height: 100%;
+  max-height: 500px; /* mesma do board */
+  width: 180px;
+  border-radius: 5px;
+  color: #e0e0e0;
+  overflow-y: auto;
+}
+
+.ranking-box h3 {
+  color: #83c346;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+#ranking-table th,
+#ranking-table td {
+  border-bottom: 1px solid #3a7a99;
+  padding: 4px;
+  text-align: center;
+}
+
+#ranking-table tbody tr:nth-child(odd) {
+  background-color: #1a3d4f;
+}
+#nameModal input {
+  width: 80%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+#saveNameButton {
+  margin-top: 15px;
+  background-color: #83c346;
+  color: #1f3344;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#saveNameButton:hover {
+  background-color: #6da736;
+  transform: scale(1.05);
+}
 @keyframes pulse {
   0% {
     transform: scale(1);
