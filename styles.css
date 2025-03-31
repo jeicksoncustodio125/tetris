@@ -38,11 +38,6 @@ h1 {
   max-height: 600px;
 }
 
-.game-board {
-  display: flex;
-  align-items: center;
-}
-
 #board {
   display: grid;
   grid-template-columns: repeat(10, 25px);

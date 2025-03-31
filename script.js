@@ -8,6 +8,7 @@ const gameOverModal = document.getElementById("gameOverModal");
 const finalScoreElement = document.getElementById("finalScore");
 const finalLevelElement = document.getElementById("finalLevel");
 const restartButton = document.getElementById("restartButton");
+const music = document.getElementById("gameMusic");
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -85,9 +86,12 @@ function init() {
   document.addEventListener("keydown", control);
   dropStart = performance.now();
   animationId = requestAnimationFrame(drop);
+  music.volume = 0.15; // opcional: define volume entre 0.0 e 1.0
+  music.play().catch((e) => console.warn("Falha ao tocar áudio:", e));
 }
 
 // Cria a matriz do tabuleiro
+
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 }
