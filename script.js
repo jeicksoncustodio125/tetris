@@ -8,7 +8,7 @@ const gameOverModal = document.getElementById("gameOverModal");
 const finalScoreElement = document.getElementById("finalScore");
 const finalLevelElement = document.getElementById("finalLevel");
 const restartButton = document.getElementById("restartButton");
-const music = document.getElementById("gameMusic");
+const pauseOverlay = document.getElementById("pause-overlay");
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -86,12 +86,9 @@ function init() {
   document.addEventListener("keydown", control);
   dropStart = performance.now();
   animationId = requestAnimationFrame(drop);
-  music.volume = 0.15; // opcional: define volume entre 0.0 e 1.0
-  music.play().catch((e) => console.warn("Falha ao tocar áudio:", e));
 }
 
 // Cria a matriz do tabuleiro
-
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 }
@@ -356,26 +353,55 @@ function movePiece(direction) {
 
 // Controles do teclado
 function control(e) {
-  if (gameOver) return;
+  // Se o jogo estiver pausado e for uma tecla de movimento, despausa
+  if (isPaused && [37, 38, 39, 40, 32].includes(e.keyCode)) {
+    togglePause(); // Despausa o jogo
+    // Executa a ação da tecla pressionada
+    switch (e.keyCode) {
+      case 37:
+        movePiece("left");
+        break;
+      case 39:
+        movePiece("right");
+        break;
+      case 38:
+        rotate();
+        break;
+      case 40:
+        movePiece("down");
+        break;
+      case 32:
+        movePiece("drop");
+        break;
+    }
+    return; // Sai da função após despausar
+  }
 
+  // Se o jogo estiver pausado, ignora outras teclas (exceto P para despausar)
+  if (isPaused && e.keyCode !== 80) return;
+
+  // Controles normais quando não estiver pausado
   switch (e.keyCode) {
-    case 37: // Seta esquerda
+    case 37:
       movePiece("left");
       break;
-    case 39: // Seta direita
+    case 39:
       movePiece("right");
       break;
-    case 40: // Seta baixo
+    case 40:
       movePiece("down");
       break;
-    case 38: // Seta cima
+    case 38:
       rotate();
       break;
-    case 32: // Espaço
+    case 32:
       movePiece("drop");
       break;
-    case 80: // Tecla P (pausa)
+    case 80:
       togglePause();
+      break;
+    case 82:
+      if (gameOver) restartGame();
       break;
   }
 }
@@ -384,11 +410,26 @@ let isPaused = false;
 
 function togglePause() {
   isPaused = !isPaused;
+
   if (isPaused) {
     cancelAnimationFrame(animationId);
+    pauseOverlay.style.display = "flex";
+    console.log("Jogo pausado");
+
+    // Pausa a música se estiver tocando
+    if (musicPlaying) {
+      bgMusic.pause();
+    }
   } else {
     dropStart = performance.now();
     animationId = requestAnimationFrame(drop);
+    pauseOverlay.style.display = "none";
+    console.log("Jogo despausado");
+
+    // Despausa a música se estava tocando antes
+    if (musicPlaying) {
+      bgMusic.play().catch((e) => console.log("Erro ao retomar música:", e));
+    }
   }
 }
 
