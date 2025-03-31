@@ -360,58 +360,76 @@ function movePiece(direction) {
 
 // Controles do teclado
 function control(e) {
-  if (nameModalOpen) return;
-
-  if (!musicPlaying) {
-    bgMusic.play().catch((err) => console.log("Erro ao tocar música:", err));
-    musicPlaying = true;
-  }
-
-  if (isPaused && [37, 38, 39, 40, 32].includes(e.keyCode)) {
-    togglePause();
-    switch (e.keyCode) {
-      case 37:
-        movePiece("left");
-        break;
-      case 39:
-        movePiece("right");
-        break;
-      case 38:
-        rotate();
-        break;
-      case 40:
-        movePiece("down");
-        break;
-      case 32:
-        movePiece("drop");
-        break;
+  if (nameModalOpen) {
+    // ENTER confirma nome
+    if (e.key === "Enter") {
+      document.getElementById("saveNameButton").click();
     }
     return;
   }
 
-  if (isPaused && e.keyCode !== 80) return;
+  if (!musicPlaying) {
+    bgMusic
+      .play()
+      .then(() => {
+        musicPlaying = true;
+      })
+      .catch((err) => {
+        console.log("Erro ao tentar tocar música:", err);
+      });
+  }
 
-  switch (e.keyCode) {
-    case 37:
+  const key = e.key.toLowerCase();
+
+  if (
+    isPaused &&
+    [
+      "arrowleft",
+      "arrowright",
+      "arrowup",
+      "arrowdown",
+      " ",
+      "a",
+      "d",
+      "w",
+      "s",
+    ].includes(key)
+  ) {
+    togglePause();
+  }
+
+  if (isPaused && key !== "p") return;
+
+  switch (key) {
+    case "arrowleft":
+    case "a":
       movePiece("left");
       break;
-    case 39:
+    case "arrowright":
+    case "d":
       movePiece("right");
       break;
-    case 40:
+    case "arrowdown":
+    case "s":
       movePiece("down");
       break;
-    case 38:
+    case "arrowup":
+    case "w":
       rotate();
       break;
-    case 32:
+    case " ":
       movePiece("drop");
       break;
-    case 80:
+    case "p":
       togglePause();
       break;
-    case 82:
+    case "r":
       if (gameOver) restartGame();
+      break;
+    case "enter":
+      if (gameOver && !nameModalOpen) {
+        restartGame();
+      }
       break;
   }
 }
