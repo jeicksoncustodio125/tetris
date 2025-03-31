@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris Simples</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="game-wrapper">
+      <h1>TETRIS</h1>
+      <div class="game-container">
+        <div class="game-board">
+          <div id="board"></div>
+        </div>
+        <div class="game-info">
+          <div class="info-box">
+            <h3>Pontuação</h3>
+            <div id="score">0</div>
+          </div>
+          <div class="info-box">
+            <h3>Nível</h3>
+            <div id="level">1</div>
+          </div>
+          <div class="info-box">
+            <h3>Próxima peça</h3>
+            <div id="next-piece"></div>
+          </div>
+          <div class="info-box controls">
+            <h3>Controles</h3>
+            <ul>
+              <li>← → : Mover</li>
+              <li>↑ : Girar</li>
+              <li>↓ : Descer</li>
+              <li>Espaço: Cair</li>
+              <li>P: Pausar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="gameOverModal" class="modal">
+      <div class="modal-content">
+        <h2>Game Over!</h2>
+        <p>Sua pontuação: <span id="finalScore">0</span></p>
+        <p>Nível alcançado: <span id="finalLevel">1</span></p>
+        <button id="restartButton">Jogar Novamente</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
