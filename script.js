@@ -99,22 +99,47 @@ function init() {
 // Cria a matriz do tabuleiro
 
 function showChallengeModal() {
-  challengeModal.style.display = "flex";
-}
+  isPaused = true; // Pausa o jogo
+  cancelAnimationFrame(animationId); // Cancela a animação, impedindo que o jogo continue
+  challengeModal.style.display = "flex"; // Exibe o modal de vitória
 
-// Eventos de clique para os botões do modal
-continueButton.addEventListener("click", () => {
-  challengeModal.style.display = "none";
-  // O jogo continua
-  gameOver = false;
-  dropStart = performance.now();
-  animationId = requestAnimationFrame(drop);
-  update();
-});
+  // Desativa os controles enquanto o modal está aberto
+  document.removeEventListener("keydown", control); // Remove os controles de teclado
+  document.getElementById("leftBtn").disabled = true;
+  document.getElementById("rightBtn").disabled = true;
+  document.getElementById("rotateBtn").disabled = true;
+  document.getElementById("dropBtn").disabled = true;
+}
 
 restartChallengeButton.addEventListener("click", () => {
   restartGame();
   challengeModal.style.display = "none";
+});
+continueButton.addEventListener("click", () => {
+  challengeModal.style.display = "none"; // Fecha o modal
+  isPaused = false; // Retorna o estado do jogo para ativo
+  dropStart = performance.now(); // Reinicia o tempo de queda das peças
+  animationId = requestAnimationFrame(drop); // Retoma a animação
+  update(); // Atualiza o jogo
+
+  // Restaura os controles após continuar jogando
+  document.addEventListener("keydown", control); // Restaura os controles de teclado
+  document.getElementById("leftBtn").disabled = false;
+  document.getElementById("rightBtn").disabled = false;
+  document.getElementById("rotateBtn").disabled = false;
+  document.getElementById("dropBtn").disabled = false;
+});
+
+restartChallengeButton.addEventListener("click", () => {
+  restartGame();
+  challengeModal.style.display = "none"; // Fecha o modal
+  isPaused = false; // Retorna o estado do jogo para ativo
+
+  // Restaura os controles ao reiniciar o jogo
+  document.getElementById("leftBtn").disabled = false;
+  document.getElementById("rightBtn").disabled = false;
+  document.getElementById("rotateBtn").disabled = false;
+  document.getElementById("dropBtn").disabled = false;
 });
 
 function createBoard() {
@@ -467,24 +492,26 @@ function togglePause() {
   isPaused = !isPaused;
 
   if (isPaused) {
-    cancelAnimationFrame(animationId);
-    pauseOverlay.style.display = "flex";
-    console.log("Jogo pausado");
+    cancelAnimationFrame(animationId); // Para a animação
+    pauseOverlay.style.display = "flex"; // Exibe a sobreposição de pausa
+    document.removeEventListener("keydown", control); // Remove os controles de teclado
 
-    // Pausa a música se estiver tocando
-    if (musicPlaying) {
-      bgMusic.pause();
-    }
+    // Desativa os botões de controle enquanto o jogo estiver pausado
+    document.getElementById("leftBtn").disabled = true;
+    document.getElementById("rightBtn").disabled = true;
+    document.getElementById("rotateBtn").disabled = true;
+    document.getElementById("dropBtn").disabled = true;
   } else {
     dropStart = performance.now();
-    animationId = requestAnimationFrame(drop);
-    pauseOverlay.style.display = "none";
-    console.log("Jogo despausado");
+    animationId = requestAnimationFrame(drop); // Retoma a animação
+    pauseOverlay.style.display = "none"; // Oculta a sobreposição de pausa
+    document.addEventListener("keydown", control); // Restaura os controles de teclado
 
-    // Despausa a música se estava tocando antes
-    if (musicPlaying) {
-      bgMusic.play().catch((e) => console.log("Erro ao retomar música:", e));
-    }
+    // Restaura os botões de controle
+    document.getElementById("leftBtn").disabled = false;
+    document.getElementById("rightBtn").disabled = false;
+    document.getElementById("rotateBtn").disabled = false;
+    document.getElementById("dropBtn").disabled = false;
   }
 }
 
