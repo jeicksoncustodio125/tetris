@@ -17,17 +17,19 @@ body {
 }
 
 .game-wrapper {
-  width: 100%;
-  max-width: 800px;
-  padding: 20px;
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  flex-direction: column; /* Organiza os elementos em coluna (se tiver mais itens) */
+  min-height: 300px; /* Altura mínima para visualização (ajuste conforme necessário) */
+  position: relative; /* Caso precise posicionar outros elementos internos */
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2.5rem;
-  color: #83c346; /* Cor de destaque */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+.game-wrapper img {
+  max-width: 100%; /* Garante que a imagem não ultrapasse o container */
+  max-height: 80px; /* Altura máxima (opcional) */
+  object-fit: contain; /* Mantém a proporção sem distorcer */
+  margin: 20px;
 }
 
 .game-container {
@@ -305,7 +307,7 @@ h1 {
   appearance: none;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, #83c346, #3a7a99);
+  background: linear-gradient(to right, #83c346, #5aad5a, #3a7a99, #175b75);
   outline: none;
   cursor: pointer;
   transition: background 0.3s;
@@ -402,6 +404,12 @@ h1 {
     width: 100%;
     padding: 0;
   }
+  .game-wrapper img {
+    width: 30%; /* % do container pai */
+    max-width: 300px; /* Limite máximo */
+    min-width: 150px; /* Limite mínimo */
+    height: auto;
+  }
 
   .game-container {
     flex-direction: column;
@@ -410,11 +418,6 @@ h1 {
     gap: 15px;
     max-height: none;
     width: 100%;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
   }
 
   .ranking-box,

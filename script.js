@@ -618,3 +618,18 @@ document.getElementById("rotateBtn").addEventListener("click", () => {
 document.getElementById("dropBtn").addEventListener("click", () => {
   if (!gameOver && !nameModalOpen) movePiece("down");
 });
+
+volumeRange.addEventListener('input', function () {
+  const value = this.value;
+  const percentage = value / this.max;
+
+  // CORRIGIDO: agora começa com azul e vai para verde
+  this.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${percentage * 100}%, #175b75 ${percentage * 100}%, #175b75 100%)`;
+});
+
+// Inicialização também corrigida
+window.addEventListener('load', function () {
+  const initialValue = volumeRange.value;
+  const initialPercentage = initialValue / volumeRange.max;
+  volumeRange.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${initialPercentage * 100}%, #175b75 ${initialPercentage * 100}%, #175b75 100%)`;
+});
