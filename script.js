@@ -12,6 +12,10 @@ const pauseOverlay = document.getElementById("pause-overlay");
 const bgMusic = document.getElementById("gameMusic");
 const volumeSlider = document.getElementById("volumeRange");
 const muteButton = document.getElementById("muteButton");
+const victoryModal = document.getElementById("victoryModal");
+const continueButton = document.getElementById("continueButton");
+const restartVictoryButton = document.getElementById("restartVictoryButton");
+
 let musicPlaying = false;
 let nameModalOpen = false;
 let isMuted = false;
@@ -619,17 +623,98 @@ document.getElementById("dropBtn").addEventListener("click", () => {
   if (!gameOver && !nameModalOpen) movePiece("down");
 });
 
-volumeRange.addEventListener('input', function () {
+volumeRange.addEventListener("input", function () {
   const value = this.value;
   const percentage = value / this.max;
 
   // CORRIGIDO: agora começa com azul e vai para verde
-  this.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${percentage * 100}%, #175b75 ${percentage * 100}%, #175b75 100%)`;
+  this.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${
+    percentage * 100
+  }%, #175b75 ${percentage * 100}%, #175b75 100%)`;
 });
 
+function showVictory() {
+  // Cancela a animação do jogo
+  cancelAnimationFrame(animationId);
+  victoryModal.style.display = "flex"; // Exibe o modal
+
+  // Atualiza a pontuação e nível no modal
+  finalScoreElement.textContent = score;
+  finalLevelElement.textContent = level;
+}
+
+// Adiciona a verificação para nível 10 ou maior
+function checkLines() {
+  let linesCleared = 0;
+
+  for (let y = ROWS - 1; y >= 0; y--) {
+    if (board[y].every((cell) => cell !== 0)) {
+      board.splice(y, 1);
+      board.unshift(Array(COLS).fill(0));
+      linesCleared++;
+      y++;
+    }
+  }
+
+  if (linesCleared > 0) {
+    score += calculateScore(linesCleared);
+    scoreElement.textContent = score;
+
+    const newLevel = Math.floor(score / 200) + 1;
+    if (newLevel > level) {
+      level = newLevel;
+      levelElement.textContent = level;
+      dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+    }
+
+    // Verifica se o nível é 10 ou maior
+    if (level >= 5) {
+      showVictory(); // Mostra o modal de vitória
+    }
+  }
+}
+
+function restartGame() {
+  // Esconde o modal de vitória
+  victoryModal.style.display = "none";
+
+  // Reseta o jogo
+  board = createBoard();
+  score = 0;
+  level = 1;
+  gameOver = false;
+  dropInterval = 1000;
+
+  // Atualiza a interface
+  scoreElement.textContent = score;
+  levelElement.textContent = level;
+
+  // Gera novas peças
+  generatePiece();
+  generateNextPiece();
+
+  // Reinicia o loop do jogo
+  dropStart = performance.now();
+  animationId = requestAnimationFrame(drop);
+  update();
+}
+
+// Função para continuar o jogo após a vitória
+function continueGame() {
+  victoryModal.style.display = "none"; // Esconde o modal
+  dropStart = performance.now();
+  animationId = requestAnimationFrame(drop); // Continua a animação
+}
+
+// Adiciona os eventos de clique para os botões do modal
+continueButton.addEventListener("click", continueGame);
+restartVictoryButton.addEventListener("click", restartGame);
+
 // Inicialização também corrigida
-window.addEventListener('load', function () {
+window.addEventListener("load", function () {
   const initialValue = volumeRange.value;
   const initialPercentage = initialValue / volumeRange.max;
-  volumeRange.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${initialPercentage * 100}%, #175b75 ${initialPercentage * 100}%, #175b75 100%)`;
+  volumeRange.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${
+    initialPercentage * 100
+  }%, #175b75 ${initialPercentage * 100}%, #175b75 100%)`;
 });

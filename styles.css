@@ -375,6 +375,64 @@ body {
 .touch-controls button:active {
   transform: scale(0.95);
 }
+
+/* Modal de Vitória */
+#victoryModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(31, 51, 68, 0.9);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+}
+
+#victoryModal .modal-content {
+  background-color: #175b75;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  border: 2px solid #83c346;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#victoryModal h2 {
+  color: #83c346;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+#victoryModal p {
+  margin: 15px 0;
+  font-size: 1.2rem;
+  color: #e0e0e0;
+}
+
+#continueButton,
+#restartVictoryButton {
+  background-color: #83c346;
+  color: #1f3344;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#continueButton:hover,
+#restartVictoryButton:hover {
+  background-color: #6da736;
+  transform: scale(1.05);
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
