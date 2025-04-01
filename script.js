@@ -12,13 +12,10 @@ const pauseOverlay = document.getElementById("pause-overlay");
 const bgMusic = document.getElementById("gameMusic");
 const volumeSlider = document.getElementById("volumeRange");
 const muteButton = document.getElementById("muteButton");
-const victoryModal = document.getElementById("victoryModal");
-const continueButton = document.getElementById("continueButton");
-const restartVictoryButton = document.getElementById("restartVictoryButton");
-
 let musicPlaying = false;
 let nameModalOpen = false;
 let isMuted = false;
+let challengeModalShown = false; // Variável para garantir que o modal apareça apenas uma vez
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -76,7 +73,7 @@ let nextPiece = null;
 let score = 0;
 let level = 1;
 let gameOver = false;
-let dropInterval = 600; // ms
+let dropInterval = 1000; // ms
 let dropStart = null;
 let animationId = null;
 
@@ -100,6 +97,26 @@ function init() {
 }
 
 // Cria a matriz do tabuleiro
+
+function showChallengeModal() {
+  challengeModal.style.display = "flex";
+}
+
+// Eventos de clique para os botões do modal
+continueButton.addEventListener("click", () => {
+  challengeModal.style.display = "none";
+  // O jogo continua
+  gameOver = false;
+  dropStart = performance.now();
+  animationId = requestAnimationFrame(drop);
+  update();
+});
+
+restartChallengeButton.addEventListener("click", () => {
+  restartGame();
+  challengeModal.style.display = "none";
+});
+
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 }
@@ -287,6 +304,12 @@ function checkLines() {
       levelElement.textContent = level;
       dropInterval = Math.max(100, 600 - (level - 1) * 100);
     }
+  }
+
+  // Exibe o modal de vitória quando a pontuação atingir 200 e o modal ainda não foi mostrado
+  if (score >= 200 && !challengeModalShown) {
+    showChallengeModal();
+    challengeModalShown = true; // Marca que o modal foi mostrado
   }
 }
 
@@ -557,7 +580,7 @@ function restartGame() {
   score = 0;
   level = 1;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = 600;
 
   // Atualiza a interface
   scoreElement.textContent = score;
@@ -632,83 +655,6 @@ volumeRange.addEventListener("input", function () {
     percentage * 100
   }%, #175b75 ${percentage * 100}%, #175b75 100%)`;
 });
-
-function showVictory() {
-  // Cancela a animação do jogo
-  cancelAnimationFrame(animationId);
-  victoryModal.style.display = "flex"; // Exibe o modal
-
-  // Atualiza a pontuação e nível no modal
-  finalScoreElement.textContent = score;
-  finalLevelElement.textContent = level;
-}
-
-// Adiciona a verificação para nível 10 ou maior
-function checkLines() {
-  let linesCleared = 0;
-
-  for (let y = ROWS - 1; y >= 0; y--) {
-    if (board[y].every((cell) => cell !== 0)) {
-      board.splice(y, 1);
-      board.unshift(Array(COLS).fill(0));
-      linesCleared++;
-      y++;
-    }
-  }
-
-  if (linesCleared > 0) {
-    score += calculateScore(linesCleared);
-    scoreElement.textContent = score;
-
-    const newLevel = Math.floor(score / 200) + 1;
-    if (newLevel > level) {
-      level = newLevel;
-      levelElement.textContent = level;
-      dropInterval = Math.max(100, 1000 - (level - 1) * 100);
-    }
-
-    // Verifica se o nível é 10 ou maior
-    if (level >= 5) {
-      showVictory(); // Mostra o modal de vitória
-    }
-  }
-}
-
-function restartGame() {
-  // Esconde o modal de vitória
-  victoryModal.style.display = "none";
-
-  // Reseta o jogo
-  board = createBoard();
-  score = 0;
-  level = 1;
-  gameOver = false;
-  dropInterval = 1000;
-
-  // Atualiza a interface
-  scoreElement.textContent = score;
-  levelElement.textContent = level;
-
-  // Gera novas peças
-  generatePiece();
-  generateNextPiece();
-
-  // Reinicia o loop do jogo
-  dropStart = performance.now();
-  animationId = requestAnimationFrame(drop);
-  update();
-}
-
-// Função para continuar o jogo após a vitória
-function continueGame() {
-  victoryModal.style.display = "none"; // Esconde o modal
-  dropStart = performance.now();
-  animationId = requestAnimationFrame(drop); // Continua a animação
-}
-
-// Adiciona os eventos de clique para os botões do modal
-continueButton.addEventListener("click", continueGame);
-restartVictoryButton.addEventListener("click", restartGame);
 
 // Inicialização também corrigida
 window.addEventListener("load", function () {

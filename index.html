@@ -12,17 +12,16 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="victoryModal" class="modal">
-      <div class="modal-content">
-        <h2>Vitória!</h2>
-        <p>Sua pontuação: <span id="finalScore">0</span></p>
-        <p>Nível alcançado: <span id="finalLevel">1</span></p>
-        <button id="continueButton">Continuar o Jogo</button>
-        <button id="restartVictoryButton">Reiniciar o Jogo</button>
-      </div>
-    </div>
     <div class="game-wrapper">
       <img src="/assets/images/tetris.png" alt="" srcset="" />
+      <div id="challengeModal" class="modal">
+        <div class="modal-content">
+          <h2>Desafio 2 Concluído!</h2>
+          <p>Parabéns! Você completou o Desafio 2!</p>
+          <button id="continueButton">Continuar jogando</button>
+          <button id="restartChallengeButton">Reiniciar Jogo</button>
+        </div>
+      </div>
       <div class="game-container">
         <div class="touch-controls">
           <button id="leftBtn">⬅️</button>
