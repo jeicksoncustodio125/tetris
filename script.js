@@ -76,7 +76,7 @@ let nextPiece = null;
 let score = 0;
 let level = 1;
 let gameOver = false;
-let dropInterval = 1000; // ms
+let dropInterval = 600; // ms
 let dropStart = null;
 let animationId = null;
 
@@ -285,7 +285,7 @@ function checkLines() {
     if (newLevel > level) {
       level = newLevel;
       levelElement.textContent = level;
-      dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+      dropInterval = Math.max(100, 600 - (level - 1) * 100);
     }
   }
 }

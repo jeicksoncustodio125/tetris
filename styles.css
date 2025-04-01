@@ -467,6 +467,7 @@ body {
     max-width: 300px; /* Limite máximo */
     min-width: 150px; /* Limite mínimo */
     height: auto;
+    margin-bottom: 300px;
   }
 
   .game-container {
