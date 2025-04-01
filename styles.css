@@ -375,6 +375,44 @@ body {
 .touch-controls button:active {
   transform: scale(0.95);
 }
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content button {
+  background-color: #83c346; /* Verde igual para ambos os botões */
+  color: #1f3344; /* Cor escura para o texto */
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 48%; /* Os botões ocupam 48% da largura do modal */
+  margin: 10px 1%; /* Espaçamento entre os botões */
+}
+
+#continueButton:hover,
+#restartChallengeButton:hover {
+  background-color: #6da736; /* Verde mais escuro para hover */
+  transform: scale(1.05);
+}
+
+#continueButton:active,
+#restartChallengeButton:active {
+  transform: scale(0.95); /* Efeito de clique */
+}
+
+/* Alinhar os botões lado a lado */
+.modal-content {
+  display: flex;
+  justify-content: space-between; /* Garante que os botões fiquem lado a lado */
+  gap: 10px; /* Espaçamento entre os botões */
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
