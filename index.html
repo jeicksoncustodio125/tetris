@@ -10,6 +10,10 @@
 
     <title>TETRIS</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="game-wrapper">
@@ -42,6 +46,8 @@
           </table>
         </div>
         <div class="game-board">
+          <div id="tetrisAnimation" class="tetris-animation">TETRIS</div>
+          <div id="levelUpAnimation" class="levelup-animation"></div>
           <div id="board"></div>
         </div>
         <div class="game-info">
@@ -103,6 +109,8 @@
       src="assets/audios/music/tetris-theme.mp3"
       loop
     ></audio>
+    <div id="tetrisAnimation" class="tetris-animation">TETRIS!</div>
+
     <script src="script.js"></script>
   </body>
 </html>

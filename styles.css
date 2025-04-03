@@ -401,6 +401,93 @@ body {
   justify-content: space-between; /* Garante que os botões fiquem lado a lado */
   gap: 10px; /* Espaçamento entre os botões */
 }
+.tetris-animation {
+  display: none; /* << IMPORTANTE */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Press Start 2P", monospace;
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(
+    270deg,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    violet,
+    red
+  );
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+}
+.levelup-animation {
+  display: none;
+  position: absolute;
+  top: 60%; /* um pouco abaixo do centro */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Press Start 2P", monospace;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  animation: none;
+  text-shadow: 0 0 5px #fff, 0 0 10px #ccc;
+  white-space: nowrap;
+}
+@keyframes levelPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes rainbowText {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes rainbowPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
 
 @keyframes pulse {
   0% {
@@ -464,6 +551,7 @@ body {
     grid-template-rows: repeat(20, 30px);
     gap: 1px;
     border: 2px solid #3a7a99;
+    position: relative;
     background-color: #175b75;
   }
 

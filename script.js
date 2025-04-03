@@ -12,9 +12,6 @@ const pauseOverlay = document.getElementById("pause-overlay");
 const bgMusic = document.getElementById("gameMusic");
 const volumeSlider = document.getElementById("volumeRange");
 const muteButton = document.getElementById("muteButton");
-let musicPlaying = false;
-let nameModalOpen = false;
-let isMuted = false;
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -75,6 +72,10 @@ let gameOver = false;
 let dropInterval = 1000; // ms
 let dropStart = null;
 let animationId = null;
+let musicPlaying = false;
+let nameModalOpen = false;
+let isMuted = false;
+let skipNextDrop = false;
 
 // Elementos do DOM
 const boardElement = document.getElementById("board");
@@ -84,6 +85,7 @@ const levelElement = document.getElementById("level");
 
 // Inicialização do jogo
 function init() {
+  loadVolumeSettings();
   createBoardElements();
   createNextPieceElements();
   generatePiece();
@@ -276,13 +278,21 @@ function checkLines() {
   if (linesCleared > 0) {
     score += calculateScore(linesCleared);
     scoreElement.textContent = score;
-
+    if (linesCleared === 4) {
+      triggerTetrisAnimation();
+    }
     // Aumenta o nível a cada 10 linhas
-    const newLevel = Math.floor(score / 200) + 1;
+    const newLevel = Math.floor(score / 300) + 1;
     if (newLevel > level) {
       level = newLevel;
       levelElement.textContent = level;
       dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+
+      triggerLevelAnimation(level);
+
+      if (level >= 10) {
+        skipNextDrop = true;
+      }
     }
   }
 }
@@ -443,25 +453,18 @@ function togglePause() {
   if (isPaused) {
     cancelAnimationFrame(animationId); // Para a animação
     pauseOverlay.style.display = "flex"; // Exibe a sobreposição de pausa
-    document.removeEventListener("keydown", control); // Remove os controles de teclado
-
-    // Desativa os botões de controle enquanto o jogo estiver pausado
-    document.getElementById("leftBtn").disabled = true;
-    document.getElementById("rightBtn").disabled = true;
-    document.getElementById("rotateBtn").disabled = true;
-    document.getElementById("dropBtn").disabled = true;
   } else {
     dropStart = performance.now();
     animationId = requestAnimationFrame(drop); // Retoma a animação
     pauseOverlay.style.display = "none"; // Oculta a sobreposição de pausa
-    document.addEventListener("keydown", control); // Restaura os controles de teclado
-
-    // Restaura os botões de controle
-    document.getElementById("leftBtn").disabled = false;
-    document.getElementById("rightBtn").disabled = false;
-    document.getElementById("rotateBtn").disabled = false;
-    document.getElementById("dropBtn").disabled = false;
   }
+
+  // Bloqueia apenas os botões visuais (mobile)
+  const buttons = ["leftBtn", "rightBtn", "rotateBtn", "dropBtn"];
+  buttons.forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.disabled = isPaused;
+  });
 }
 
 // Modifique a função drop() para verificar se está pausado
@@ -556,7 +559,7 @@ function restartGame() {
   score = 0;
   level = 1;
   gameOver = false;
-  dropInterval = 600;
+  dropInterval = 1000;
 
   // Atualiza a interface
   scoreElement.textContent = score;
@@ -575,9 +578,89 @@ function restartGame() {
   update();
 }
 
+function drop(timestamp) {
+  if (gameOver || isPaused) return;
+
+  if (skipNextDrop) {
+    // Pula apenas UM ciclo
+    skipNextDrop = false;
+    dropStart = timestamp;
+    animationId = requestAnimationFrame(drop);
+    return;
+  }
+
+  const delta = timestamp - dropStart;
+
+  if (delta > dropInterval) {
+    movePiece("down");
+    dropStart = timestamp;
+  }
+
+  animationId = requestAnimationFrame(drop);
+}
+
 // Adiciona o evento de clique no botão
 restartButton.addEventListener("click", restartGame);
 
+function triggerTetrisAnimation() {
+  const anim = document.getElementById("tetrisAnimation");
+
+  // Reinicia a animação
+  anim.style.display = "block"; // Garante que esteja visível
+  anim.style.animation = "none";
+  void anim.offsetWidth;
+  anim.style.animation =
+    "rainbowText 1.5s linear forwards, rainbowPulse 1.5s ease-out forwards";
+
+  // Oculta depois que a animação termina
+  setTimeout(() => {
+    anim.style.display = "none";
+  }, 1500);
+}
+
+function triggerLevelAnimation(currentLevel) {
+  const anim = document.getElementById("levelUpAnimation");
+
+  anim.textContent = `NÍVEL ${currentLevel}`;
+  anim.style.display = "block";
+  anim.style.animation = "none";
+  void anim.offsetWidth;
+
+  // Inicia animação
+  anim.style.animation = "levelPulse 0.8s ease-out forwards";
+
+  // Usa requestAnimationFrame para esconder após X frames (~0.8s)
+  const hideAfter = performance.now() + 800;
+
+  function checkToHide(timestamp) {
+    if (timestamp >= hideAfter) {
+      anim.style.display = "none";
+    } else {
+      requestAnimationFrame(checkToHide);
+    }
+  }
+
+  requestAnimationFrame(checkToHide);
+}
+
+function loadVolumeSettings() {
+  const savedVolume = localStorage.getItem("gameVolume");
+  const savedMuted = localStorage.getItem("gameMuted");
+
+  if (savedVolume !== null) {
+    volumeSlider.value = savedVolume;
+    bgMusic.volume = savedMuted === "true" ? 0 : savedVolume / 100;
+  }
+
+  isMuted = savedMuted === "true";
+  updateMuteButton();
+
+  // Atualiza o gradiente do slider
+  const percentage = volumeSlider.value / 100;
+  volumeSlider.style.background = `linear-gradient(to right, #83c346 0%, #83c346 ${
+    percentage * 100
+  }%, #175b75 ${percentage * 100}%, #175b75 100%)`;
+}
 // Inicia o jogo
 init();
 
@@ -587,6 +670,10 @@ volumeSlider.addEventListener("input", () => {
   bgMusic.volume = volume;
   isMuted = volume === 0;
   updateMuteButton();
+
+  // Salva no localStorage
+  localStorage.setItem("gameVolume", volumeSlider.value);
+  localStorage.setItem("gameMuted", isMuted);
 });
 
 muteButton.addEventListener("click", () => {
@@ -595,10 +682,14 @@ muteButton.addEventListener("click", () => {
     bgMusic.volume = 0;
     volumeSlider.value = 0;
   } else {
-    bgMusic.volume = 1;
-    volumeSlider.value = 100;
+    bgMusic.volume = (localStorage.getItem("gameVolume") || 50) / 100;
+    volumeSlider.value = localStorage.getItem("gameVolume") || 50;
   }
   updateMuteButton();
+
+  // Salva no localStorage
+  localStorage.setItem("gameMuted", isMuted);
+  localStorage.setItem("gameVolume", volumeSlider.value);
 });
 
 function updateMuteButton() {
