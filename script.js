@@ -259,6 +259,14 @@ function lock() {
   generateNextPiece();
 }
 
+function playLevelUpSound() {
+  const sound = document.getElementById("levelUpSound");
+
+  if (sound.paused) {
+    sound.currentTime = 0;
+    sound.play();
+  }
+}
 // Verifica e remove linhas completas
 function checkLines() {
   let linesCleared = 0;
@@ -280,6 +288,7 @@ function checkLines() {
     scoreElement.textContent = score;
     if (linesCleared === 4) {
       triggerTetrisAnimation();
+      playLevelUpSound();
     }
     // Aumenta o nível a cada 10 linhas
     const newLevel = Math.floor(score / 300) + 1;
@@ -287,6 +296,7 @@ function checkLines() {
       level = newLevel;
       levelElement.textContent = level;
       dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+      playLevelUpSound();
 
       triggerLevelAnimation(level);
 
