@@ -3,11 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
-
     <title>TETRIS</title>
     <link rel="stylesheet" href="styles.css" />
     <link
@@ -19,17 +14,11 @@
     <div class="game-wrapper">
       <img
         src="https://jeicksoncustodio125.github.io/tetris/assets/images/tetris.png"
-        alt=""
-        srcset=""
+        alt="Logo Tetris"
       />
 
       <div class="game-container">
-        <div class="touch-controls">
-          <button id="leftBtn">⬅️</button>
-          <button id="rotateBtn">🔄</button>
-          <button id="rightBtn">➡️</button>
-          <button id="dropBtn">⬇️</button>
-        </div>
+        <!-- RANKING À ESQUERDA -->
         <div class="ranking-box">
           <h3>🏆 Ranking</h3>
           <table id="ranking-table">
@@ -45,11 +34,25 @@
             </tbody>
           </table>
         </div>
+
+        <!-- TABULEIRO CENTRAL -->
         <div class="game-board">
           <div id="tetrisAnimation" class="tetris-animation">TETRIS</div>
           <div id="levelUpAnimation" class="levelup-animation"></div>
-          <div id="board"></div>
+          <div class="board-wrapper">
+            <div id="board"></div>
+          </div>
+
+          <!-- CONTROLES MOBILE -->
+          <div class="touch-controls">
+            <button id="leftBtn">⬅️</button>
+            <button id="rotateBtn">🔄</button>
+            <button id="rightBtn">➡️</button>
+            <button id="dropBtn">⬇️</button>
+          </div>
         </div>
+
+        <!-- INFO À DIREITA -->
         <div class="game-info">
           <div class="info-box">
             <h3>Pontuação</h3>
@@ -76,6 +79,8 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL GAME OVER -->
     <div id="gameOverModal" class="modal">
       <div class="modal-content">
         <h2>Game Over!</h2>
@@ -84,6 +89,8 @@
         <button id="restartButton">Jogar Novamente</button>
       </div>
     </div>
+
+    <!-- MODAL PAUSA -->
     <div id="pause-overlay" class="pause-overlay">
       <div class="volume-controls">
         <label for="volumeRange">Volume 🎵</label>
@@ -91,6 +98,8 @@
         <button id="muteButton">🔇 Mutar</button>
       </div>
     </div>
+
+    <!-- MODAL NOME -->
     <div id="nameModal" class="modal">
       <div class="modal-content">
         <h2>Parabéns!</h2>
@@ -98,12 +107,14 @@
         <input
           type="text"
           id="playerNameInput"
-          maxlength="20"
+          maxlength="12"
           placeholder="Seu nome"
         />
         <button id="saveNameButton">Salvar</button>
       </div>
     </div>
+
+    <!-- Áudio -->
     <audio
       id="gameMusic"
       src="assets/audios/music/tetris-theme.mp3"
@@ -115,8 +126,7 @@
       preload="auto"
     ></audio>
 
-    <div id="tetrisAnimation" class="tetris-animation">TETRIS!</div>
-
+    <!-- Script -->
     <script src="script.js"></script>
   </body>
 </html>

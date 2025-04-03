@@ -18,27 +18,28 @@ body {
 
 .game-wrapper {
   display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center; /* Centraliza verticalmente */
-  flex-direction: column; /* Organiza os elementos em coluna (se tiver mais itens) */
-  min-height: 300px; /* Altura mínima para visualização (ajuste conforme necessário) */
-  position: relative; /* Caso precise posicionar outros elementos internos */
+  justify-content: center; /* Centro vertical */
+  align-items: center; /* Centro horizontal */
+  flex-direction: column;
+  height: 100vh; /* ← ocupa toda a altura da tela */
+  position: relative;
 }
 
 .game-wrapper img {
-  max-width: 100%; /* Garante que a imagem não ultrapasse o container */
-  max-height: 80px; /* Altura máxima (opcional) */
-  object-fit: contain; /* Mantém a proporção sem distorcer */
-  margin: 20px;
+  display: block;
+  margin: 0 auto 20px auto; /* centraliza horizontalmente e adiciona espaço abaixo */
+  max-width: 100%;
+  max-height: 80px;
+  object-fit: contain;
 }
 
 .game-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  gap: 20px;
-  height: auto;
-  max-height: 600px;
+  gap: 30px;
+  width: 100%;
 }
 
 #board {
@@ -225,7 +226,8 @@ body {
   padding: 10px;
   height: 100%;
   max-height: 500px; /* mesma do board */
-  width: 180px;
+  width: 300px;
+
   border-radius: 5px;
   color: #e0e0e0;
   overflow-y: auto;

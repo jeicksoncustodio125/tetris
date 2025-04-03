@@ -84,14 +84,14 @@ const scoreElement = document.getElementById("score");
 const levelElement = document.getElementById("level");
 
 // Inicialização do jogo
-function init() {
+async function init() {
   loadVolumeSettings();
+  await renderRanking(); // ← força o ranking a aparecer sempre atualizado
   createBoardElements();
   createNextPieceElements();
   generatePiece();
   generateNextPiece();
   update();
-  renderRanking(); // <- Adicionado aqui
   document.addEventListener("keydown", control);
   dropStart = performance.now();
   animationId = requestAnimationFrame(drop);
@@ -291,7 +291,7 @@ function checkLines() {
       playLevelUpSound();
     }
     // Aumenta o nível a cada 10 linhas
-    const newLevel = Math.floor(score / 300) + 1;
+    const newLevel = Math.floor(score / 400) + 1;
     if (newLevel > level) {
       level = newLevel;
       levelElement.textContent = level;
@@ -512,45 +512,71 @@ function showGameOver() {
     gameOverModal.style.display = "flex";
   }
 }
-function updateRanking(entry) {
-  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+async function updateRanking(entry) {
+  try {
+    const response = await fetch(
+      "https://x8ki-letl-twmt.n7.xano.io/api:E6ixH2CO/ranking",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(entry),
+      }
+    );
 
-  // Adiciona nova entrada
-  ranking.push(entry);
+    if (!response.ok) {
+      throw new Error("Erro ao salvar no ranking");
+    }
 
-  // Ordena do maior para o menor
-  ranking.sort((a, b) => b.score - a.score);
-
-  // Limita a 10 entradas
-  const top10 = ranking.slice(0, 10);
-
-  // Salva de volta
-  localStorage.setItem("ranking", JSON.stringify(top10));
+    // Aguarda salvar e depois atualiza a tabela com os dados mais novos
+    await renderRanking();
+  } catch (error) {
+    console.error("Erro ao enviar para Xano:", error);
+  }
 }
 
-function renderRanking() {
-  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+async function renderRanking() {
   const tableBody = document.querySelector("#ranking-table tbody");
+  tableBody.innerHTML = "";
 
-  tableBody.innerHTML = ""; // Limpa tabela
+  try {
+    const response = await fetch(
+      "https://x8ki-letl-twmt.n7.xano.io/api:E6ixH2CO/ranking"
+    );
+    const data = await response.json();
 
-  ranking.forEach((entry, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${entry.name}</td>
-      <td>${entry.score}</td>
-    `;
-    tableBody.appendChild(row);
-  });
+    data_tratada = [];
+
+    for (i = 0; i < 10; i++) {
+      data_tratada.push(data[i]);
+    }
+
+    data_tratada.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry.name}</td>
+        <td>${entry.score}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Erro ao carregar ranking:", error);
+  }
 }
+
 document.getElementById("saveNameButton").addEventListener("click", () => {
   const input = document.getElementById("playerNameInput");
   const playerName = input.value.trim();
+  if (playerName.length > 12) {
+    alert("O nome deve ter no máximo 12 caracteres.");
+    input.focus();
+    return;
+  }
 
   if (playerName) {
     updateRanking({ name: playerName, score });
-    renderRanking();
     input.value = "";
     document.getElementById("nameModal").style.display = "none";
     nameModalOpen = false;
