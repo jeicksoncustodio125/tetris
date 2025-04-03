@@ -15,7 +15,6 @@ const muteButton = document.getElementById("muteButton");
 let musicPlaying = false;
 let nameModalOpen = false;
 let isMuted = false;
-let challengeModalShown = false; // Variável para garantir que o modal apareça apenas uma vez
 
 // Peças do Tetris e suas cores
 const SHAPES = {
@@ -97,50 +96,6 @@ function init() {
 }
 
 // Cria a matriz do tabuleiro
-
-function showChallengeModal() {
-  isPaused = true; // Pausa o jogo
-  cancelAnimationFrame(animationId); // Cancela a animação, impedindo que o jogo continue
-  challengeModal.style.display = "flex"; // Exibe o modal de vitória
-
-  // Desativa os controles enquanto o modal está aberto
-  document.removeEventListener("keydown", control); // Remove os controles de teclado
-  document.getElementById("leftBtn").disabled = true;
-  document.getElementById("rightBtn").disabled = true;
-  document.getElementById("rotateBtn").disabled = true;
-  document.getElementById("dropBtn").disabled = true;
-}
-
-restartChallengeButton.addEventListener("click", () => {
-  restartGame();
-  challengeModal.style.display = "none";
-});
-continueButton.addEventListener("click", () => {
-  challengeModal.style.display = "none"; // Fecha o modal
-  isPaused = false; // Retorna o estado do jogo para ativo
-  dropStart = performance.now(); // Reinicia o tempo de queda das peças
-  animationId = requestAnimationFrame(drop); // Retoma a animação
-  update(); // Atualiza o jogo
-
-  // Restaura os controles após continuar jogando
-  document.addEventListener("keydown", control); // Restaura os controles de teclado
-  document.getElementById("leftBtn").disabled = false;
-  document.getElementById("rightBtn").disabled = false;
-  document.getElementById("rotateBtn").disabled = false;
-  document.getElementById("dropBtn").disabled = false;
-});
-
-restartChallengeButton.addEventListener("click", () => {
-  restartGame();
-  challengeModal.style.display = "none"; // Fecha o modal
-  isPaused = false; // Retorna o estado do jogo para ativo
-
-  // Restaura os controles ao reiniciar o jogo
-  document.getElementById("leftBtn").disabled = false;
-  document.getElementById("rightBtn").disabled = false;
-  document.getElementById("rotateBtn").disabled = false;
-  document.getElementById("dropBtn").disabled = false;
-});
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -327,14 +282,8 @@ function checkLines() {
     if (newLevel > level) {
       level = newLevel;
       levelElement.textContent = level;
-      dropInterval = Math.max(100, 600 - (level - 1) * 100);
+      dropInterval = Math.max(100, 1000 - (level - 1) * 100);
     }
-  }
-
-  // Exibe o modal de vitória quando a pontuação atingir 200 e o modal ainda não foi mostrado
-  if (score >= 200 && !challengeModalShown) {
-    showChallengeModal();
-    challengeModalShown = true; // Marca que o modal foi mostrado
   }
 }
 

@@ -395,17 +395,6 @@ body {
   margin: 10px 1%; /* Espaçamento entre os botões */
 }
 
-#continueButton:hover,
-#restartChallengeButton:hover {
-  background-color: #6da736; /* Verde mais escuro para hover */
-  transform: scale(1.05);
-}
-
-#continueButton:active,
-#restartChallengeButton:active {
-  transform: scale(0.95); /* Efeito de clique */
-}
-
 /* Alinhar os botões lado a lado */
 .modal-content {
   display: flex;
