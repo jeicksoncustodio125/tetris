@@ -118,6 +118,7 @@ function createBoardElements() {
 
 // Cria os elementos HTML da próxima peça
 function createNextPieceElements() {
+  // Desktop
   nextPieceElement.innerHTML = "";
   for (let y = 0; y < NEXT_ROWS; y++) {
     for (let x = 0; x < NEXT_COLS; x++) {
@@ -125,6 +126,18 @@ function createNextPieceElements() {
       cell.classList.add("next-cell");
       cell.id = `next-${y}-${x}`;
       nextPieceElement.appendChild(cell);
+    }
+  }
+
+  // Mobile
+  const nextPieceMobile = document.getElementById("next-piece-mobile");
+  nextPieceMobile.innerHTML = "";
+  for (let y = 0; y < NEXT_ROWS; y++) {
+    for (let x = 0; x < NEXT_COLS; x++) {
+      const cell = document.createElement("div");
+      cell.classList.add("next-cell-mobile");
+      cell.id = `next-mobile-${y}-${x}`;
+      nextPieceMobile.appendChild(cell);
     }
   }
 }
@@ -166,25 +179,26 @@ function generateNextPiece() {
 
 // Desenha a próxima peça
 function drawNextPiece() {
-  // Limpa o display da próxima peça
   for (let y = 0; y < NEXT_ROWS; y++) {
     for (let x = 0; x < NEXT_COLS; x++) {
-      const cell = document.getElementById(`next-${y}-${x}`);
-      cell.className = "next-cell";
+      const cellDesktop = document.getElementById(`next-${y}-${x}`);
+      const cellMobile = document.getElementById(`next-mobile-${y}-${x}`);
+      if (cellDesktop) cellDesktop.className = "next-cell";
+      if (cellMobile) cellMobile.className = "next-cell-mobile";
     }
   }
 
-  // Desenha a próxima peça
   for (let y = 0; y < nextPiece.shape.length; y++) {
     for (let x = 0; x < nextPiece.shape[y].length; x++) {
       if (nextPiece.shape[y][x]) {
-        const cell = document.getElementById(`next-${y}-${x}`);
-        cell.classList.add(nextPiece.color);
+        const cellDesktop = document.getElementById(`next-${y}-${x}`);
+        const cellMobile = document.getElementById(`next-mobile-${y}-${x}`);
+        if (cellDesktop) cellDesktop.classList.add(nextPiece.color);
+        if (cellMobile) cellMobile.classList.add(nextPiece.color);
       }
     }
   }
 }
-
 // Atualiza o tabuleiro
 function update() {
   // Limpa o tabuleiro
@@ -194,6 +208,30 @@ function update() {
       cell.className = "cell";
       if (board[y][x]) {
         cell.classList.add(COLORS[board[y][x]]);
+      }
+    }
+  }
+  function createNextPieceElements() {
+    // versão desktop
+    nextPieceElement.innerHTML = "";
+    for (let y = 0; y < NEXT_ROWS; y++) {
+      for (let x = 0; x < NEXT_COLS; x++) {
+        const cell = document.createElement("div");
+        cell.classList.add("next-cell");
+        cell.id = `next-${y}-${x}`;
+        nextPieceElement.appendChild(cell);
+      }
+    }
+
+    // versão mobile
+    const nextPieceMobile = document.getElementById("next-piece-mobile");
+    nextPieceMobile.innerHTML = "";
+    for (let y = 0; y < NEXT_ROWS; y++) {
+      for (let x = 0; x < NEXT_COLS; x++) {
+        const cell = document.createElement("div");
+        cell.classList.add("next-cell-mobile");
+        cell.id = `next-mobile-${y}-${x}`;
+        nextPieceMobile.appendChild(cell);
       }
     }
   }
@@ -509,6 +547,7 @@ function showGameOver() {
     document.getElementById("playerNameInput").focus();
   } else {
     // Senão, mostra o Game Over direto
+    renderRankingModal(); // ← Adicionado aqui
     gameOverModal.style.display = "flex";
   }
 }
@@ -563,6 +602,29 @@ async function renderRanking() {
     });
   } catch (error) {
     console.error("Erro ao carregar ranking:", error);
+  }
+}
+async function renderRankingModal() {
+  const tableBody = document.querySelector("#ranking-table-modal tbody");
+  tableBody.innerHTML = "";
+
+  try {
+    const response = await fetch(
+      "https://x8ki-letl-twmt.n7.xano.io/api:E6ixH2CO/ranking"
+    );
+    const data = await response.json();
+
+    data.slice(0, 10).forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry.name}</td>
+        <td>${entry.score}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Erro ao carregar ranking do modal:", error);
   }
 }
 
@@ -732,6 +794,12 @@ function updateMuteButton() {
   muteButton.textContent = isMuted ? "🔊 Ativar som" : "🔇 Mutar";
 }
 
+pauseOverlay.addEventListener("click", (e) => {
+  // Se clicou diretamente no fundo do overlay (e não nos elementos internos)
+  if (e.target === pauseOverlay && !gameOver && !nameModalOpen) {
+    togglePause();
+  }
+});
 // Controles de toque para mobile
 document.getElementById("leftBtn").addEventListener("click", () => {
   if (!gameOver && !nameModalOpen) movePiece("left");
@@ -747,6 +815,9 @@ document.getElementById("rotateBtn").addEventListener("click", () => {
 
 document.getElementById("dropBtn").addEventListener("click", () => {
   if (!gameOver && !nameModalOpen) movePiece("down");
+});
+document.getElementById("pauseMobileBtn").addEventListener("click", () => {
+  if (!gameOver && !nameModalOpen) togglePause();
 });
 
 volumeRange.addEventListener("input", function () {
